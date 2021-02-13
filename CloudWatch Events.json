@@ -1,0 +1,30 @@
+{
+  "detail-type": [
+    "AWS API Call via CloudTrail"
+  ],
+  "source": [
+    "aws.ec2"
+  ],
+  "detail": {
+    "eventSource": [
+      "ec2.amazonaws.com"
+    ],
+    "eventName": [
+      "CreateImage",
+      "CreateInternetGateway",
+      "CreateNatGateway",
+      "CreateNetworkAcl",
+      "CreateNetworkInterface",
+      "CreateRouteTable",
+      "CreateSecurityGroup",
+      "CreateSnapshot",
+      "CreateSubnet",
+      "CreateVolume",
+      "RunInstances",
+      "CreateTransitGateway",
+      "CreateTransitGatewayVpcAttachment",
+      "AllocateAddress",
+      "CreateVpc"
+    ]
+  }
+}
