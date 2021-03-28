@@ -1,16 +1,16 @@
 # Automatization for Tag Creation with the Username ARN and ID:
-This is an open-source solution to deploy **AutoTagging** using `CloudTrail` and channel the event invoke through `Cloudwatch Events` and `EventBrigdge` across accounts to a endpoint that is going to be a `lambda function` to `tag resources` at the moment of creation with the arn of who created, the username ID, and the time of creation. 
-Insofar we have the following services sucessfully tested for auto-tag creation; `all ec2 services, S3, CloudTrail, CloudWatch, System Manager, Code Pipeline, CodeBuild, Sns, Sqs, IAM, and Cloudformation`. Each of those services get a tag with Creator ID, the ARN, and Time of Creation.
+This is an open-source solution to deploy **AutoTagging** using `CloudTrail` and route the event invoke through `Cloudwatch Events` and `EventBrigdge` to a endpoint - a `lambda function` to `tag resources` at the moment of creation with the arn of who created, the username ID, and the time of creation. 
+Insofar we have the following services sucessfully tested for auto-tag creation; `all ec2 services, S3, CloudTrail, CloudWatch, System Manager, Code Pipeline, CodeBuild, Sns, Sqs, IAM, and Cloudformation`. Each of those services get a set of tags with Creator ID, the ARN, and Timestamp of Creation.
 
 ### PreFlight Check
 1. Intermedial level in Python. So you can adapt and customized the `CreateTagCreatorID.py` files to your needs
 2. Basic to intermedial understanding about how to edit json policies in `EventBridge Rules` to change the rule policies base on your use cases since we have not cover every single resource in AWS.
-3. An existing `AWS Organization`
-2. A `Resource Access Manager (RAM)` enabled for the organization
-3. One AWS Account to centralize and receive all creation events known as the "the Central or *Receiver Account"*. Here is where we deploy **AutoTagging Lambda function**.
-4. In Every other linked/ sender  account included in your organization will need the following
+3. One AWS Account to deploy **AutoTagging Lambda function** and to launch AWS resources.
+4. In the AWS Account we must include:
     A. `Cloudwatch` log group collecting `cloudtrail` for every region.
-    B. Cloudwatch and Eventbridge rules for every region for Receiver account and in the linked accounts in order to create a pipeline to pass the create events from the source region in any linked account to the lambda function in us-east-1 in central or receiving account.
+    B. A `Eventbridge rule` for every region that we want to include in the tag automatizaton of newly deployed resources.
+    C. A `SNS Topic` to send the Event Data to the Auto-tagging lambda function.
+    D. A `Lambda Function` as endpoint to do the tagging.
 
 ## List of Resources Used or Deployed
 ### Two AWS Accounts subscribed to an Organization
