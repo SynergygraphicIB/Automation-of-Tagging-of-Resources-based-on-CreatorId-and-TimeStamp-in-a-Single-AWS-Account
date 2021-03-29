@@ -3,47 +3,33 @@ This is an open-source solution to do **AutoTagging** for newly deployed resourc
 Insofar we have the following services sucessfully tested for auto-tag creation; `all ec2 services, S3, CloudTrail, CloudWatch, System Manager, Code Pipeline, CodeBuild, Sns, Sqs, IAM, and Cloudformation`. Each of those services get a set of tags with Creator ID, the ARN, and Timestamp of Creation.
 
 ### PreFlight Check
-1. Intermedial level in Python. So you can adapt and customized the `CreateTagCreatorID.py` files to your needs
-2. Basic to intermedial understanding about how to edit json policies in `EventBridge Rules` to change the rule policies base on your use cases since we have not cover every single resource in AWS.
-3. One AWS Account to deploy **AutoTagging Lambda function** and to launch AWS resources.
+1. Intermedial level in Python. So you can adapt and customized the `Lambda.py` file to your needs
+2. Basic to intermedial understanding about how to edit json policies in `EventBridge Rules` to change the rule basde on your use cases since we have not covered every single resource in AWS.
+3. One AWS Account to deploy Auto-Tagging **Lambda function** and to launch AWS resources.
 4. In the AWS Account we must include:
     A. `Cloudwatch` log group collecting `cloudtrail` for every region.
     B. A `Eventbridge rule` for every region that we want to include in the tag automatizaton of newly deployed resources.
-    C. A `SNS Topic` to send the Event Data to the Auto-tagging lambda function.
-    D. A `Lambda Function` as endpoint to do the tagging.
+    C. A `SNS Topic` for everyt region to send the Event Data to the Auto-tagging lambda function.
+    D. A `Lambda Function` in us-east-1 as endpoint to do the tagging.
 
-## List of Resources Used or Deployed
-### Two AWS Accounts subscribed to an Organization
-**A Receiver/Central AWS Account**
-One existing AWS account attached to and organization that we are going to use to deploy the auto tagging lambda function in us-east-1 as endpoint and that for the purpose of this project its Id will be 111111111111
+## List of Resources that can be tagged.
+1. EC2 Resources
+2. S3
+3. IAM
+4. CloudTrail
+5. Cloudwatch
+6. System Manager
+7. Code Pipeline
+8. CodeBuild
+9. SNS Topics
+10. SQS
 
-**A Sender/linked AWS Account**
-A Second existing AWS account that for the purpose of this exercise we will have an Id 222222222222 and that is attached to and organization. We are going to deploy AWS resources in us-east-1, action which will create an event. This event will be sent through a pipeline that will have as endpoint the **lambda autotagging** in us-east-1 in account 111111111111. Thus fulfilling the purpose of centralizing auto-tagging for any linked account that we do the setting we are going to explain in this document.
+### One existing AWS Account
+An existing AWS account that for the purpose of this exercise we will have an Id 111111111111. We are going to deploy AWS resources in us-east-1, action which will create an event. This event will be sent through a pipeline that will have as endpoint the **lambda autotagging** in us-east-1. Thus fulfilling the purpose of centralizing auto-tagging for the listed events coming from any region linked to the lambda.
 
-**AWS Organizations**
-An Existing AWS organization that for the purpose of this project has an ID my-org-id-1234
-**Resource Access Management (RAM)**
-Must be sure that Enabling sharing with AWS Organizations. In the Central Account go to ```Services Tab > type RAM in the search for services text box > select Resource Access Manager > In the RAM menu go to Settings - "Enable sharing with AWS Organizations"``` must be checked out.
+### IAM Role
 
-### IAM Roles
-We need two roles, one  in *Receiver Account* A role with tailored permissions to assume a role in the linked account, and another in the linked account with least priviledge access to create tags for newly launched resources sucha as such as `VPCs, S3 Buckets, SNS Topics, etc`  . In is important to add that we have to follow the least priviledge access principle when attaching or creating policies for such roles.
-
-**"AutoTaggingMasterLambda"** - Resource Role to give permission to lambda autotagging function in *receiver account* to assume role in *linked account* with AWS STS service.
-More Details about the policies we need in the Steps section of this document.
-See `AssumeLinkedRolePolicy.json`
-or copy paste from here...
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": {
-        "Effect": "Allow",
-        "Action": "sts:AssumeRole",
-        "Resource": "arn:aws:iam::*:role/AutoTaggingExecuteLambda"
-    }
-}
-```
-
-**AutoTaggingExecuteLambda** - Role we create in every *linked account* with a limited access policy to do the tagging of newly deployed resources. This is the role that  *AutoTaggingMasterLambda* assumes to make possible the recollection of creation events across accounts.
+**AutoTaggingExecuteLambda** - Role we create with a limited access policy to enable the lambda to execute the tagging of newly deployed resources. This is the role will have to polices attached; the aws mananged basic lambda execution policy
 
 See `AutoTaggingExecuteLambdaPolicy.json`
 or copy paste from here...
@@ -55,65 +41,65 @@ or copy paste from here...
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
-                "sqs:UntagQueue",
-                "logs:*",
-                "iam:TagMFADevice",
-                "codepipeline:ListTagsForResource",
-                "cloudformation:UpdateStackSet",
-                "cloudformation:CreateChangeSet",
-                "iam:TagSAMLProvider",
-                "codebuild:UpdateProject",
-                "s3:DeleteJobTagging",
-                "ssm:RemoveTagsFromResource",
-                "cloudtrail:AddTags",
-                "ssm:AddTagsToResource",
-                "codepipeline:GetPipeline",
-                "cloudformation:UpdateStack",
-                "s3:PutObjectTagging",
-                "s3:DeleteObjectTagging",
-                "iam:UntagSAMLProvider",
-                "s3:DeleteStorageLensConfigurationTagging",
-                "ec2:CreateTags",
-                "ssm:GetParameters",
-                "s3:DeleteObjectVersionTagging",
-                "iam:TagPolicy",
-                "codepipeline:UntagResource",
-                "cloudformation:UntagResource",
-                "resource-explorer:*",
-                "sns:TagResource",
-                "mediastore:UntagResource",
-                "cloudformation:UpdateStackInstances",
-                "iam:UntagRole",
-                "ec2:DeleteTags",
-                "codepipeline:CreatePipeline",
-                "iam:TagRole",
-                "s3:ReplicateTags",
-                "cloudformation:UpdateTerminationProtection",
-                "codepipeline:CreateCustomActionType",
-                "sns:UntagResource",
-                "codepipeline:TagResource",
-                "s3:PutBucketTagging",
                 "tag:*",
-                "codebuild:BatchGetProjects",
-                "s3:PutStorageLensConfigurationTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:PutJobTagging",
-                "iam:UntagServerCertificate",
-                "iam:TagUser",
-                "iam:UntagUser",
-                "sqs:TagQueue",
-                "ssm:ListTagsForResource",
-                "iam:UntagMFADevice",
-                "iam:TagServerCertificate",
-                "cloudformation:TagResource",
+                "resource-explorer:*",
+                "iam:TagPolicy",
+                "iam:TagInstanceProfile",
                 "iam:UntagPolicy",
                 "iam:UntagOpenIDConnectProvider",
                 "iam:UntagInstanceProfile",
                 "iam:TagOpenIDConnectProvider",
-                "mediastore:TagResource",
-                "codepipeline:PutWebhook",
+                "iam:TagMFADevice",
+                "iam:TagSAMLProvider",
+                "iam:UntagSAMLProvider",
+                "iam:TagRole",
+                "iam:UntagRole",
+                "iam:UntagServerCertificate",
+                "iam:TagUser",
+                "iam:UntagUser",       
+                "iam:UntagMFADevice",
+                "iam:TagServerCertificate",
+                "ec2:CreateTags",
+                "ec2:DeleteTags",
+                "s3:DeleteJobTagging",
+                "s3:PutObjectTagging",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteStorageLensConfigurationTagging",
+                "s3:DeleteObjectVersionTagging",
+                "s3:ReplicateTags",
+                "s3:PutBucketTagging",
+                "s3:PutStorageLensConfigurationTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:PutJobTagging",      
+                "sqs:TagQueue",
+                "sqs:UntagQueue",
+                "sns:TagResource",
+                "sns:UntagResource",
+                "logs:*",
+                "cloudtrail:AddTags",   
                 "cloudtrail:RemoveTags",
-                "iam:TagInstanceProfile"
+                "cloudformation:UpdateTerminationProtection",
+                "cloudformation:TagResource",
+                "cloudformation:UntagResource",             
+                "cloudformation:CreateChangeSet",
+                "cloudformation:UpdateStackSet",
+                "cloudformation:UpdateStack",
+                "cloudformation:UpdateStackInstances",
+                "codebuild:UpdateProject",
+                "codebuild:BatchGetProjects",
+                "codepipeline:GetPipeline",
+                "codepipeline:ListTagsForResource",
+                "codepipeline:UntagResource",
+                "codepipeline:CreatePipeline",
+                "codepipeline:CreateCustomActionType",
+                "codepipeline:TagResource",
+                "codepipeline:PutWebhook",
+                "ssm:RemoveTagsFromResource",
+                "ssm:GetParameters",
+                "ssm:AddTagsToResource",
+                "ssm:ListTagsForResource",
+                "mediastore:TagResource",
+                "mediastore:UntagResource"  
             ],
             "Resource": "*"
         }
@@ -143,10 +129,10 @@ or copy paste from here...
 }
 ```
 
-We will create a rule for every region in the *linked account* that we want to include in the **Auto Tagging** and a matching rule in every matching region in the receiver account
+We will create a rule for every region in the account that we want to include in the **Auto Tagging** lambda function in us-east-1
 
 ### Sns Topics
-**SnsSendToLambda** - The `SNS Topic` that have to be created in every region of the *Receiver Account* where we want to do deployments.  This `SNS Topic` helps to centralize collection of creation events from all regions and sends the event metadata to us-east-1 to the **Autotagging lambda**, the one function that does the auto tagging throughout the organzation. We set this sns topic it as target for rule **"EventAutoTagging"** rule in `EventBridge` in order to pass the event to lambda (then again from any region). Sns is one of the few AWS services that can deliver event data across regions, so in order to make our pipeline as scalable as possible we use `SNS Topics` as intermedial step in te pipeline.
+**SnsSendToLambda** - The `SNS Topic` that have to be created in every region of the account where we want to do deployments.  This `SNS Topic` helps to centralize the collection of creation events from all regions and sends the event metadata to us-east-1 to the **Autotagging lambda**, the one function that does the auto tagging throughout the account. We set this `SNS Topic` it as target for rule **"EventAutoTagging"** rule in `EventBridge` in order to pass the event to lambda (then again from any region). Sns is one of the few AWS services that can deliver event data across regions, so in order to make our pipeline as scalable as possible we use `SNS Topics` as intermedial step in te pipeline.
 In our project a `EventBridge Rule` could be deployed in us-east-2 or us-west-1 and stil relay the event using `SNS Topic` as target to pass events to the lambda function in us-east-1 region.
 
 ### Event Buses Permissions in CloudWatch
