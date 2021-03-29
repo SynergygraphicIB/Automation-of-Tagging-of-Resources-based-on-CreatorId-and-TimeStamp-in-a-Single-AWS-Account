@@ -455,7 +455,7 @@ c.- In the Amazon EventBridge menu select Rules and click "Create Rule" button
 d.- Under Name and Description > Name type **"EventAutoTaggingRule**"
 e.- Add a Description **"Rule to send creation events to SnsSendToLambda"** if you choose to, it is optional
 f.- In Define pattern choose ```"Event pattern" > Custom Pattern```
-g.- Copy paste the following json pattern
+g.- Copy paste the following json in Event Pattern Dialog Box
 ```json
 {
   "detail-type": [
@@ -475,6 +475,7 @@ g.- Copy paste the following json pattern
   }
 }
 ```
+...and click "Save"
 Notice that this is exactly the same rule we used in CloudWatch in Receiver Account
 
 h.- In Select event bus leave it as it is, `"AWS default event bus"` and `"Enable the rule on the selected bus"`
