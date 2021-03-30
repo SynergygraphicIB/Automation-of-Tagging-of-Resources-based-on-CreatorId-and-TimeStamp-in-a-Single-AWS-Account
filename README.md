@@ -175,7 +175,7 @@ EventBridge and CloudWatch services sort of overlap each other. Yet you can crea
 Log in into the console of your existing AWS Account.
 For most purposes we are going to use  us-east-1 as chose region for this project. Some AWS Service are global, such as; `Access Management (IAM)` and `S3`. Yet, `Cloudwatch`, `EventBridge`, `SNS Topics`, and `Lambda` are regional.
 
-## 2 IAM- Setting up a Role with the appropiate permsissions to execute Lambda functions
+## 2. IAM- Setting up a Role with the appropiate permsissions to execute Lambda functions
 Create a role and a policy that has enough permissions to execute the auto-tagging lambda function and to tag resources
 
 #### Create a policy to autorize **ExecuteAutoTaggingLambda** role to tag resources
