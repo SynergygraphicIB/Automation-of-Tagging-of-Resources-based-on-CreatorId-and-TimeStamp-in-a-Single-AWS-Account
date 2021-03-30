@@ -12,17 +12,20 @@ Insofar we have the following services sucessfully tested for auto-tag creation;
     C. A `SNS Topic` for everyt region to send the Event Data to the Auto-tagging lambda function.
     D. A `Lambda Function` in us-east-1 as endpoint to do the tagging.
 
-## List of Resources that can be tagged.
-1. EC2 Resources
-2. S3
-3. IAM
-4. CloudTrail
-5. Cloudwatch
-6. System Manager
-7. Code Pipeline
-8. CodeBuild
-9. SNS Topics
-10. SQS
+## List of AWS Resources included in the Auto-tagging Pipeline
+1. IAM
+2. EC2
+3. S3
+4. SNS Topics
+5. SQS
+6. CloudTrail
+7. Cloudwatch Logs
+8. CodePipeline
+9. CodeBuild
+10. CloudFormation 
+11. MediaStore
+12. Resource Group Tagging
+13. Tag Editor
 
 ### One existing AWS Account
 An existing AWS account that for the purpose of this exercise we will have an Id 111111111111. We are going to deploy AWS resources in us-east-1, action which will create an event. This event will be sent through a pipeline that will have as endpoint the **lambda autotagging** in us-east-1. Thus fulfilling the purpose of centralizing auto-tagging for the listed events coming from any region linked to the lambda.
