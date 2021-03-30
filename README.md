@@ -1,5 +1,5 @@
 # Automatization for Tag Creation with the Username ARN and ID:
-This is an open-source solution to do **AutoTagging** for newly deployed resources using `CloudTrail` and `EventBridge` to route the event to a endpoint - a `lambda function` It will do its task  `to tag resources` at the moment of creation with the arn of who created, the username ID, and the time of creation. 
+This is an open-source solution to do **AutoTagging** for newly deployed resources using `CloudTrail`, `EventBridge`, and `SNS Topics` to route the event to a endpoint - a `lambda function` that It will do its task  `to tag resources` at the moment of creation with the arn of who created, the username ID, and the time of creation. 
 Insofar we have the following services sucessfully tested for auto-tag creation; `all ec2 services, S3, CloudTrail, CloudWatch, System Manager, Code Pipeline, CodeBuild, Sns, Sqs, IAM, and Cloudformation`. Each of those services get a set of tags with Creator ID, the ARN, and Timestamp of Creation.
 
 ### PreFlight Check
