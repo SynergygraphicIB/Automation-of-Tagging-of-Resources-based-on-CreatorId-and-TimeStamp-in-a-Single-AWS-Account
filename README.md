@@ -171,11 +171,11 @@ By using *SNS Topics* as intermedial step in the pipeline allow us to modify thi
 When using the prefix matching feature in EventBridge we can reduce the amount of written code when creating the filters and we may reduce the updating as well. 
 EventBridge and CloudWatch services sort of overlap each other. Yet you can create custom rules in EventBridge that you cannot do in CloudWatch. Therefore, we configure the customed rules in EventBridge, yet the end result is also shown in CloudWatch. The funny thing when updating the very same rules in CloudWatch directly we get an error message, it just does not work in CloudWatch. 
 
-# 1. Log in into you account 
+## 1. Log in into you account 
 Log in into the console of your existing AWS Account.
 For most purposes we are going to use  us-east-1 as chose region for this project. Some AWS Service are global, such as; `Access Management (IAM)` and `S3`. Yet, `Cloudwatch`, `EventBridge`, `SNS Topics`, and `Lambda` are regional.
 
-# 2 IAM- Setting up a Role with the appropiate permsissions to execute Lambda functions
+## 2 IAM- Setting up a Role with the appropiate permsissions to execute Lambda functions
 Create a role and a policy that has enough permissions to execute the auto-tagging lambda function and to tag resources
 
 #### Create a policy to autorize **ExecuteAutoTaggingLambda** role to tag resources
@@ -259,7 +259,7 @@ d.- In Create policy window select JSON tab. Click and paste the following polic
 }
 ```
 
-# 3. Lambda- Deploy Autotagging Lambda Function in us-east-1
+## 3. Lambda- Deploy Autotagging Lambda Function in us-east-1
 
 We set our lambda function in virginia region/ us-east-1. This is the endpoint for any deployment or creation event happening in any region in that is configured in the pipeline for **Auto-tagging* and in this lambda function. 
 
@@ -283,7 +283,7 @@ k.- In Configure test event leave Create new test event selected, In event name 
 
 {pegar imagen aqui}
 
-# 4. SNS Topics - Create a Topic and publish to a lambda function
+## 4. SNS Topics - Create a Topic and publish to a lambda function
 Create a topic - **"SNStoAutoTaggingLambda"** and Subscribe it to Lambda Function **"AutoTagging"** *in us-east-1*. So let us follow the next steps:
 
 a.- Be sure you are in us-east-1 region (SNS works across regions, but still is a regional resource)
@@ -303,7 +303,7 @@ l.- Hit the Create Subscription Button. Voila! the subscription is done.
 
 {pegar imagen aqui}
 
-# 5. Amazon EventBridge -  Create an EventBridge Rule in us-east-1 and use as target SnsSendToLambda.
+## 5. Amazon EventBridge -  Create an EventBridge Rule in us-east-1 and use as target SnsSendToLambda.
 Create a rule that captures all creation events in `Sender Acccount` using `AWS API Call via CloudTrail` and select **SnsSendToLambda** as target:
 a.- Be sure you are in `us-east-1` 
 b.- At the console screen go to services and type in the text box `"EventBridge"` or under
@@ -340,7 +340,7 @@ j.- Click `"Create Rule" `button.
 
 {pegar imagen aqui}
 
-# 6. Deploy a VPC in us-east-1 and Check the Tags
+## 6. Deploy a VPC in us-east-1 and Check the Tags
 Either by console or by AWS CLi SDK for boto3 deploy a Vpc or any resource that you desire.
 Using the AWS Console:
 a. In us-east-1 go to the resource tab
