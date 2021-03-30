@@ -259,8 +259,7 @@ d.- In Create policy window select JSON tab. Click and paste the following polic
 }
 ```
 
-{pegar imagen 1.pmg}
-
+![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automation-of-Tagging-of-Resources-based-on-CreatorId-and-TimeStamp-in-a-Single-AWS-Account/main/img/1.png)
 
 ## 3. Lambda- Deploy Autotagging Lambda Function in us-east-1
 
@@ -284,7 +283,7 @@ j.- Once you paste the new code click "Deploy"
 j.- In the Code Source menu click Test
 k.- In Configure test event leave Create new test event selected, In event name type create_tags and click "Create Test" Button
 
-{pegar imagen 2.png}
+![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automation-of-Tagging-of-Resources-based-on-CreatorId-and-TimeStamp-in-a-Single-AWS-Account/main/img/2.png)
 
 ## 4. SNS Topics - Create a Topic and publish to a lambda function
 Create a topic - **"SNStoAutoTaggingLambda"** and Subscribe it to Lambda Function **"AutoTagging"** *in us-east-1*. So let us follow the next steps:
@@ -304,8 +303,7 @@ j. In Details > Topic ARN look for the topic created in the previous steps
 k.-In Protocol choose AWS Lambbda and look for the ARN of the lambda function **AutoTagging.**
 l.- Hit the Create Subscription Button. Voila! the subscription is done.
 
-{pegar imagen aqui}
-
+![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automation-of-Tagging-of-Resources-based-on-CreatorId-and-TimeStamp-in-a-Single-AWS-Account/main/img/3.png)
 ## 5. Amazon EventBridge -  Create an EventBridge Rule in us-east-1 and use as target SnsSendToLambda.
 Create a rule that captures all creation events in `Sender Acccount` using `AWS API Call via CloudTrail` and select **SnsSendToLambda** as target:
 a.- Be sure you are in `us-east-1` 
@@ -341,8 +339,7 @@ h.- In Select` Targets > in Target click the text box, scroll up and select "SNS
 i.- In Topic text box select **"SnsSendToLambda"**
 j.- Click `"Create Rule" `button. 
 
-{pegar imagen  4.png aqui}
-
+![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automation-of-Tagging-of-Resources-based-on-CreatorId-and-TimeStamp-in-a-Single-AWS-Account/main/img/4.png)
 ## 6. Deploy a VPC in us-east-1 and Check the Tags
 Either by console or by AWS CLi SDK for boto3 deploy a Vpc or any resource that you desire.
 Using the AWS Console:
@@ -355,8 +352,7 @@ f.- In IPv4 CIDR block type 10.0.0.0/24, leave the rest of the settings as it is
 g.- Click the "Create VPC" button.
 h.- You will be redirected to the newly created vpc window details. under the "Tags" tab click it and check for the tags. 
 
-![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automatization-of-Tag-Creator-based-on-UserName-Across-Accounts/main/img/11.png)
-
+![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automation-of-Tagging-of-Resources-based-on-CreatorId-and-TimeStamp-in-a-Single-AWS-Account/main/img/5.png)
 You will see the Following tags; create_at, UserName, Name, and creatorId in your newly deployed VPC.
 
 Erase the VPC deployed erased and if you have any comments write to us if you have any comments, suggestions, critics, etc at contact@synergygraphics.io!
