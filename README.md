@@ -259,6 +259,9 @@ d.- In Create policy window select JSON tab. Click and paste the following polic
 }
 ```
 
+{pegar imagen 1.pmg}
+
+
 ## 3. Lambda- Deploy Autotagging Lambda Function in us-east-1
 
 We set our lambda function in virginia region/ us-east-1. This is the endpoint for any deployment or creation event happening in any region in that is configured in the pipeline for **Auto-tagging* and in this lambda function. 
@@ -281,7 +284,7 @@ j.- Once you paste the new code click "Deploy"
 j.- In the Code Source menu click Test
 k.- In Configure test event leave Create new test event selected, In event name type create_tags and click "Create Test" Button
 
-{pegar imagen aqui}
+{pegar imagen 2.png}
 
 ## 4. SNS Topics - Create a Topic and publish to a lambda function
 Create a topic - **"SNStoAutoTaggingLambda"** and Subscribe it to Lambda Function **"AutoTagging"** *in us-east-1*. So let us follow the next steps:
@@ -338,7 +341,7 @@ h.- In Select` Targets > in Target click the text box, scroll up and select "SNS
 i.- In Topic text box select **"SnsSendToLambda"**
 j.- Click `"Create Rule" `button. 
 
-{pegar imagen aqui}
+{pegar imagen  4.png aqui}
 
 ## 6. Deploy a VPC in us-east-1 and Check the Tags
 Either by console or by AWS CLi SDK for boto3 deploy a Vpc or any resource that you desire.
@@ -350,7 +353,6 @@ d.- In Your VPCs window click "Create VPC" button
 e.- In Create VPC > VPC settings > Name tag type test-project or any name you want to.
 f.- In IPv4 CIDR block type 10.0.0.0/24, leave the rest of the settings as it is.
 g.- Click the "Create VPC" button.
-{pegar imagen aqui}
 h.- You will be redirected to the newly created vpc window details. under the "Tags" tab click it and check for the tags. 
 
 ![alt text](https://raw.githubusercontent.com/SynergygraphicIB/Automatization-of-Tag-Creator-based-on-UserName-Across-Accounts/main/img/11.png)
