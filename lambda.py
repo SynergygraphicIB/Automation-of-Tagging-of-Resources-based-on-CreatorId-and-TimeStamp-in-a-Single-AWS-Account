@@ -16,6 +16,8 @@ def lambda_handler(event, context):
     
     eventName=event["detail"].get("eventName")
     
+    roleARN= "arn:aws:iam::"+str(event.get("account"))+":role/AutoTaggingExecuteLambda"
+    
     region=event["detail"].get("awsRegion")
     userName = event["detail"]["userIdentity"].get("sessionContext")
     principaID= event["detail"]["userIdentity"].get("arn")
@@ -28,7 +30,7 @@ def lambda_handler(event, context):
 
     #CreateStack
     if(eventName == "CreateStack"):
-        cloudformation = boto3.client('cloudformation' )
+        cloudformation = boto3.client('cloudformation' , region_name = region)
         stack= event["detail"]["requestParameters"].get("stackName")
         url = event["detail"]["requestParameters"].get("templateURL")
         addTagStack(cloudformation,userName,principaID, stack , url)
@@ -36,15 +38,15 @@ def lambda_handler(event, context):
 
     #ParameterStore
     elif(eventName == "PutParameter"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
         projectArn= event["detail"]["resources"][0]["ARN"]
         addtagResource(resourcegroupstaggingapi,userName,principaID, projectArn)
     
 
     #Pipeline
     elif(eventName == "CreatePipeline"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
-        codepipeline= boto3.client('codepipeline' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
+        codepipeline= boto3.client('codepipeline' , region_name = region)
         codepipelineArn= event["detail"]["responseElements"]["pipeline"].get("name")
         responsepipeline= codepipeline.get_pipeline(name = codepipelineArn)
         codepipelineArn = responsepipeline["metadata"].get("pipelineArn")
@@ -53,26 +55,26 @@ def lambda_handler(event, context):
 
     #CodeBuild
     elif(eventName == "CreateProject"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
         projectArn= event["detail"]["requestParameters"].get("name")
         addtagResource(resourcegroupstaggingapi,userName,principaID, projectArn)
      
     #CLOUDTRAIL
     elif(eventName == "CreateTrail"):
-        clientTrail= boto3.client('cloudtrail' )
+        clientTrail= boto3.client('cloudtrail' , region_name = region)
         trailArn= event["detail"]["responseElements"].get("trailARN")
         addTagTrail(clientTrail,userName,principaID, trailArn)
                 
 
     #TOPIC SQS
     elif(eventName == "CreateQueue"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
         queueArn= event["detail"]["requestParameters"].get("queueName")
         queueArn = "arn:aws:sqs:"+region+":" +str(event.get("account"))+":"+queueArn
         addtagResource(resourcegroupstaggingapi,userName,principaID, queueArn)    
     #TOPIC SNS
     elif(eventName == "CreateTopic"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
         topicArn= event["detail"]["responseElements"].get("topicArn")
         addtagResource(resourcegroupstaggingapi,userName,principaID, topicArn)
     #LAMBDA    
@@ -81,53 +83,55 @@ def lambda_handler(event, context):
         if(type(functionArn) == dict):
             functionArn=functionArn.get("functionArn")
             print(functionArn)
-            resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+            resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
             addtagResource(resourcegroupstaggingapi,userName,principaID, functionArn)
         else:
             print("NO ")
             
     #CLOUDWATCH
     elif(eventName == "PutRule"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
         ruleArn= event["detail"]["responseElements"].get("ruleArn")
         addtagResource(resourcegroupstaggingapi,userName,principaID, ruleArn)
         
     elif(eventName == "CreateLogGroup"):
-        resourcegroupstaggingapi= boto3.client('logs' )
+        resourcegroupstaggingapi= boto3.client('logs' , region_name = region)
         logArn= event["detail"]["requestParameters"].get("logGroupName")
         addtagLogGruop(resourcegroupstaggingapi,userName,principaID, logArn)
     #IAM
     elif(eventName == "CreateUser"):
-        iam= boto3.client('iam' )
+        iam= boto3.client('iam' , region_name = region)
         userNamec= event["detail"]["responseElements"]["user"].get("userName")
         addTagUser(iam,userName,principaID, userNamec)
 
     elif(eventName == "CreateRole"):
-        iam= boto3.client('iam' )
+        iam= boto3.client('iam' , region_name = region)
         roleName= event["detail"]["responseElements"]["role"].get("roleName")
         addTagRole(iam,userName,principaID, roleName)
     
     elif(eventName =="CreatePolicy"):
-        iam= boto3.client('iam' )
+        iam= boto3.client('iam' , region_name = region)
         PolicyArn= event["detail"]["responseElements"]["policy"].get("arn")
         addTagPolicy(iam,userName,principaID, PolicyArn)
     #S3
     elif(eventName == "CreateBucket"):
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
+        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' , region_name = region)
         bucket_name= event["detail"]["requestParameters"].get("bucketName")
         bucket_name ="arn:aws:s3:::"+bucket_name
         addtagResource(resourcegroupstaggingapi,userName,principaID, bucket_name)
         
     elif(eventName == "PutObject"):    
-        resourcegroupstaggingapi= boto3.client('resourcegroupstaggingapi' )
-        logArn= event["detail"]["requestParameters"].get("logGroupName")
-        logArn = "arn:aws:sqs:"+region+":" +str(event.get("account"))+":"+logArn
-        addtagResource(resourcegroupstaggingapi,userName,principaID, logArn)
-        
+        resourcegroupstaggingapi= boto3.client('s3' , region_name = region)
+        obj= event["detail"]["resources"][0]["ARN"]
+        bucket_name= event["detail"]["requestParameters"].get("bucketName")
+        bucket_arn ="arn:aws:s3:::"+bucket_name
+        file = obj.split(bucket_arn+"/")[1] 
+        addTagObjt(resourcegroupstaggingapi,userName,principaID, bucket_name,file)
+
     #EC2
     elif("Create" in eventName or (eventName in ["RunInstances","AllocateAddress"])):
         
-        client = boto3.client('ec2' )
+        client = boto3.client('ec2', region_name = region )
         response =  event["detail"]["responseElements"]
         request = event["detail"]["requestParameters"]
     
@@ -331,6 +335,31 @@ def addtagLogGruop(client,userName,principaID, arn):
     except Exception as e:
         print (e)
         
+
         
         
-    
+def addTagObjt(client,userName,principaID, ids ,file):
+    try:
+        response = client.put_object_tagging(
+            Bucket=ids,
+            Key=file,
+            Tagging={
+                  'TagSet' : [
+                    {
+                        'Key': 'creatorId',
+                        'Value': principaID,
+                    },
+                    {
+                        'Key': 'UserName',
+                        'Value': userName,
+                    },
+                    {
+                        'Key': 'create_at',
+                        'Value': now
+                    },
+                ]
+                
+            },
+        )
+    except Exception as e:
+        print (e)
